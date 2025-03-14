@@ -1,5 +1,7 @@
 import sys
 from collections import deque
+STUDENT_ID = 'a1891628' # your student ID
+DEGREE = 'UG'
 
 def parse_map(map_name):
     try:
