@@ -99,7 +99,6 @@ def bfs(rows, cols, start, end, grid, mode):
     lastVisitDisplay = format_grid(lastVisit)
 
     if mode == 'release':
-        print("path:")
         for row in pathGrid:
             print(" ".join(row))
     elif mode == 'debug':
