@@ -121,9 +121,8 @@ def bfs(rows, cols, start, end, grid, mode):
 
 
 def ucs(rows, cols, start, end, grid, mode):
-    # literally dijkstra's
     start = (start[0] - 1, start[1] - 1)
-    end = (end[0] - 1, end[1] - 1)
+    end   = (end[0] - 1, end[1] - 1)
 
     costGrid = [[math.inf for col in range(cols)] for row in range(rows)]
     costGrid[start[0]][start[1]] = 0
@@ -135,13 +134,15 @@ def ucs(rows, cols, start, end, grid, mode):
     parent = [[None for col in range(cols)] for row in range(rows)]
 
     currentNodes = []
-    heapq.heappush(currentNodes, (0, start[0], start[1]))
+    insertionCounter = 0
+    heapq.heappush(currentNodes, (0, insertionCounter, start[0], start[1]))
+    insertionCounter += 1
 
     counter = 0
     goalFound = False
 
     while currentNodes:
-        currentCost, r, c = heapq.heappop(currentNodes)
+        currentCost, order, r, c = heapq.heappop(currentNodes)
         counter += 1
 
         if currentCost > costGrid[r][c]:continue
@@ -155,9 +156,8 @@ def ucs(rows, cols, start, end, grid, mode):
             goalFound = True
             break
 
-        for (dr, dc) in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
+        for dr, dc in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
             nr, nc = r + dr, c + dc
-
             if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] != 'X':
                 currentElevation = grid[r][c]
                 nextElevation = grid[nr][nc]
@@ -170,13 +170,13 @@ def ucs(rows, cols, start, end, grid, mode):
                 if newCost < costGrid[nr][nc]:
                     costGrid[nr][nc] = newCost
                     parent[nr][nc] = (r, c)
-                    heapq.heappush(currentNodes, (newCost, nr, nc))
+                    heapq.heappush(currentNodes, (newCost, insertionCounter, nr, nc))
+                    insertionCounter += 1
 
     if goalFound == False:
         print("goal unreached")
         return
-    
-    
+
     path = []
     pr, pc = end
     while (pr, pc) is not None:
@@ -202,6 +202,8 @@ def ucs(rows, cols, start, end, grid, mode):
     firstVisitDisplay = format_grid(firstVisit)
     lastVisitDisplay = format_grid(lastVisit)
 
+    # print(f"Total cost: {totalCost}\n")
+    
     if mode == 'release':
         for row in pathGrid:
             print(" ".join(row))
@@ -209,15 +211,12 @@ def ucs(rows, cols, start, end, grid, mode):
         print("path:")
         for row in pathGrid:
             print(" ".join(row))
-        
         print("\n#visits:")
         for row in visitsDisplay:
             print(" ".join(row))
-        
         print("\nfirst visit:")
         for row in firstVisitDisplay:
             print(" ".join(row))
-
         print("\nlast visit:")
         for row in lastVisitDisplay:
             print(" ".join(row))
