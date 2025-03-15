@@ -74,7 +74,7 @@ def bfs(rows, cols, start, end, grid, mode):
                     queue.append(neighbourNode)
         
     if goalNode is None:
-        print("goal unreached")
+        print("null")
         return
     
     path = []
@@ -174,7 +174,7 @@ def ucs(rows, cols, start, end, grid, mode):
                     insertionCounter += 1
 
     if goalFound == False:
-        print("goal unreached")
+        print("null")
         return
 
     path = []
