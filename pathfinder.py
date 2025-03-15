@@ -1,5 +1,7 @@
 import sys
 from collections import deque
+import math
+import heapq
 STUDENT_ID = 'a1891628' # your student ID
 DEGREE = 'UG'
 
@@ -28,6 +30,8 @@ def parse_map(map_name):
         print(f"Error in reading map file")
         sys.exit(1)
 
+def format_grid(matrix):
+    return [[str(x) if x is not None else '.' for x in row]for row in matrix]
 
 def bfs(rows, cols, start, end, grid, mode):
 
@@ -91,9 +95,6 @@ def bfs(rows, cols, start, end, grid, mode):
                 row.append('X' if grid[i][j] == 'X' else str(grid[i][j]))
         pathGrid.append(row)
 
-    def format_grid(matrix):
-        return [[str(x) if x is not None else '.' for x in row]for row in matrix]
-
     visitsDisplay = format_grid(visits)
     firstVisitDisplay = format_grid(firstVisit)
     lastVisitDisplay = format_grid(lastVisit)
@@ -114,6 +115,109 @@ def bfs(rows, cols, start, end, grid, mode):
         for row in firstVisitDisplay:
             print(" ".join(row))
         
+        print("\nlast visit:")
+        for row in lastVisitDisplay:
+            print(" ".join(row))
+
+
+def ucs(rows, cols, start, end, grid, mode):
+    # literally dijkstra's
+    start = (start[0] - 1, start[1] - 1)
+    end = (end[0] - 1, end[1] - 1)
+
+    costGrid = [[math.inf for col in range(cols)] for row in range(rows)]
+    costGrid[start[0]][start[1]] = 0
+
+    visits = [[0 for col in range(cols)] for row in range(rows)]
+    firstVisit = [[None for col in range(cols)] for row in range(rows)]
+    lastVisit = [[None for col in range(cols)] for row in range(rows)]
+
+    parent = [[None for col in range(cols)] for row in range(rows)]
+
+    currentNodes = []
+    heapq.heappush(currentNodes, (0, start[0], start[1]))
+
+    counter = 0
+    goalFound = False
+
+    while currentNodes:
+        currentCost, r, c = heapq.heappop(currentNodes)
+        counter += 1
+
+        if currentCost > costGrid[r][c]:continue
+
+        visits[r][c] += 1
+        if firstVisit[r][c] is None:
+            firstVisit[r][c] = counter
+        lastVisit[r][c] = counter
+
+        if (r, c) == end:
+            goalFound = True
+            break
+
+        for (dr, dc) in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] != 'X':
+                currentElevation = grid[r][c]
+                nextElevation = grid[nr][nc]
+                if nextElevation > currentElevation:
+                    stepCost = 1 + (nextElevation - currentElevation)
+                else:
+                    stepCost = 1
+                newCost = currentCost + stepCost
+
+                if newCost < costGrid[nr][nc]:
+                    costGrid[nr][nc] = newCost
+                    parent[nr][nc] = (r, c)
+                    heapq.heappush(currentNodes, (newCost, nr, nc))
+
+    if goalFound == False:
+        print("goal unreached")
+        return
+    
+    
+    path = []
+    pr, pc = end
+    while (pr, pc) is not None:
+        path.append((pr, pc))
+        if parent[pr][pc] is None:
+            break
+        pr, pc = parent[pr][pc]
+    path.reverse()
+
+    totalCost = costGrid[end[0]][end[1]]
+
+    pathGrid = []
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            if (i, j) in path:
+                row.append('*')
+            else:
+                row.append(str(grid[i][j]) if grid[i][j] != 'X' else 'X')
+        pathGrid.append(row)
+
+    visitsDisplay = format_grid(visits)
+    firstVisitDisplay = format_grid(firstVisit)
+    lastVisitDisplay = format_grid(lastVisit)
+
+    if mode == 'release':
+        for row in pathGrid:
+            print(" ".join(row))
+    elif mode == 'debug':
+        print("path:")
+        for row in pathGrid:
+            print(" ".join(row))
+        
+        print("\n#visits:")
+        for row in visitsDisplay:
+            print(" ".join(row))
+        
+        print("\nfirst visit:")
+        for row in firstVisitDisplay:
+            print(" ".join(row))
+
         print("\nlast visit:")
         for row in lastVisitDisplay:
             print(" ".join(row))
@@ -140,6 +244,7 @@ if __name__ == "__main__":
         pass
     elif algorithm == 'ucs':
         # call ucs function
+        ucs(rows, cols, start, end, grid, mode)
         pass
     elif algorithm == 'astar':
         #call astar function
