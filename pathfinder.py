@@ -36,7 +36,7 @@ def format_grid(matrix):
 def bfs(rows, cols, start, end, grid, mode):
 
     start = (start[0] - 1, start[1] - 1)
-    end = (end[0] - 1, end[0] -1)
+    end = (end[0] - 1, end[1] -1)
 
     visits = [[0 for j in range(cols)] for i in range(rows)]
     firstVisit = [[None for j in range(cols)] for i in range(rows)]
@@ -174,7 +174,7 @@ def ucs(rows, cols, start, end, grid, mode):
                     insertionCounter += 1
 
     if goalFound == False:
-        print("nulddl")
+        print("null")
         return
 
     path = []
