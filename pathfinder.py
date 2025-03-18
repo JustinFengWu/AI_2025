@@ -221,6 +221,127 @@ def ucs(rows, cols, start, end, grid, mode):
         for row in lastVisitDisplay:
             print(" ".join(row))
 
+def astar(rows, cols, start, end, grid, mode, heuristic):
+    start = (start[0] - 1, start[1] - 1)
+    end   = (end[0] - 1, end[1] - 1)
+
+    costGrid = [[math.inf for col in range(cols)] for row in range(rows)]
+    costGrid[start[0]][start[1]] = 0
+
+    visits = [[0 for col in range(cols)] for row in range(rows)]
+    firstVisit = [[None for col in range(cols)] for row in range(rows)]
+    lastVisit = [[None for col in range(cols)] for row in range(rows)]
+
+    parent = [[None for col in range(cols)] for row in range(rows)]
+
+    currentNodes = []
+    insertionCounter = 0
+
+    def manhattan(row, col):
+        return abs(row - end[0]) + abs(col - end[1])
+    
+    def euclidean(row, col):
+        return math.sqrt((row - end[0])**2 + (col - end[1])**2)
+    
+    if heuristic == "manhattan":
+        heuristicDistanceStart = manhattan(start[0], start[1])
+    elif heuristic == "euclidean":
+        heuristicDistanceStart = euclidean(start[0], start[1])
+
+    estimateValueStart = 0 + heuristicDistanceStart
+
+    # a tuple of estiamted cost, insertion counter, cumulative cost, row, col, 
+    heapq.push(currentNodes, (estimateValueStart, insertionCounter, 0, start[0], start[1]))
+    insertionCounter += 1
+
+    counter = 0
+    goalFound = False
+
+    while currentNodes:
+        currentEstimate, notused, currentCost, r, c = heapq.heappop(currentNodes)
+        counter += 1
+
+        if currentCost > costGrid[r][c]:
+            continue
+
+        visits[r][c] += 1
+        if firstVisit[r][c] is None:
+            firstVisit[r][c] = counter
+        lastVisit[r][c] = counter
+
+        if (r, c) == end:
+            goalFound = True
+            break
+        
+        for dr, dc in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] != 'X':
+                currentElevation = grid[r][c]
+                nextElevation = grid[nr][nc]
+                if nextElevation > currentElevation:
+                    stepCost = 1 + (nextElevation - currentElevation)
+                else:
+                    stepCost = 1
+                newCost = currentCost + stepCost
+
+                if newCost < costGrid[nr][nc]:
+                    costGrid[nr][nc] = newCost
+                    parent[nr][nc] = (r, c)
+
+                    if heuristic == "manhattan":
+                        newHeuristic = manhattan(nr, nc)
+                    elif heuristic == "euclidean":
+                        newHeuristic = euclidean(nr, nc)
+
+                    newEstimate = newCost + newHeuristic
+                    heapq.heappush(currentNodes, (newEstimate, insertionCounter, newCost, nr, nc))
+                    insertionCounter += 1
+
+        if goalFound == False:
+            print("null")
+            return
+
+        path = []
+        pr, pc = end
+        while (pr, pc) is not None:
+            path.append((pr, pc))
+            if parent[pr][pc] is None:
+                break
+            pr, pc = parent[pr][pc]
+        path.reverse()
+
+
+        pathGrid = []
+        for i in range(rows):
+            row = []
+            for j in range(cols):
+                if (i, j) in path:
+                    row.append('*')
+                else:
+                    row.append(str(grid[i][j]) if grid[i][j] != 'X' else 'X')
+            pathGrid.append(row)
+
+        visitsDisplay = format_grid(visits)
+        firstVisitDisplay = format_grid(firstVisit)
+        lastVisitDisplay = format_grid(lastVisit)
+        
+        if mode == 'release':
+            for row in pathGrid:
+                print(" ".join(row))
+        elif mode == 'debug':
+            print("path:")
+            for row in pathGrid:
+                print(" ".join(row))
+            print("\n#visits:")
+            for row in visitsDisplay:
+                print(" ".join(row))
+            print("\nfirst visit:")
+            for row in firstVisitDisplay:
+                print(" ".join(row))
+            print("\nlast visit:")
+            for row in lastVisitDisplay:
+                print(" ".join(row))
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 4 or (sys.argv[3] == "astar" and len(sys.argv) < 5):
