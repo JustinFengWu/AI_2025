@@ -368,6 +368,7 @@ if __name__ == "__main__":
         pass
     elif algorithm == 'astar':
         #call astar function
+        astar(rows, cols, start, end, grid, mode, heuristic)
         pass
 
 
