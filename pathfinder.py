@@ -67,7 +67,7 @@ def bfs(rows, cols, start, end, grid, mode):
 
         if (r, c) not in closed:
             closed.add((r, c))
-            for dr, dc in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
+            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 nr, nc = r + dr, c + dc
                 if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] != 'X':
                     neighbourNode = (nr, nc, node)
@@ -156,7 +156,7 @@ def ucs(rows, cols, start, end, grid, mode):
             goalFound = True
             break
 
-        for dr, dc in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nr, nc = r + dr, c + dc
             if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] != 'X':
                 currentElevation = grid[r][c]
@@ -273,7 +273,7 @@ def astar(rows, cols, start, end, grid, mode, heuristic):
             goalFound = True
             break
         
-        for dr, dc in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nr, nc = r + dr, c + dc
             if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] != 'X':
                 currentElevation = grid[r][c]
