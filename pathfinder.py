@@ -174,7 +174,7 @@ def ucs(rows, cols, start, end, grid, mode):
                     insertionCounter += 1
 
     if goalFound == False:
-        print("null")
+        print("nulddl")
         return
 
     path = []
