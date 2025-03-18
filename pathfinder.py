@@ -297,50 +297,50 @@ def astar(rows, cols, start, end, grid, mode, heuristic):
                     heapq.heappush(currentNodes, (newEstimate, insertionCounter, newCost, nr, nc))
                     insertionCounter += 1
 
-        if goalFound == False:
+    if goalFound == False:
             print("null")
             return
 
-        path = []
-        pr, pc = end
-        while (pr, pc) is not None:
-            path.append((pr, pc))
-            if parent[pr][pc] is None:
-                break
-            pr, pc = parent[pr][pc]
-        path.reverse()
+    path = []
+    pr, pc = end
+    while (pr, pc) is not None:
+        path.append((pr, pc))
+        if parent[pr][pc] is None:
+            break
+        pr, pc = parent[pr][pc]
+    path.reverse()
 
 
-        pathGrid = []
-        for i in range(rows):
-            row = []
-            for j in range(cols):
-                if (i, j) in path:
-                    row.append('*')
-                else:
-                    row.append(str(grid[i][j]) if grid[i][j] != 'X' else 'X')
-            pathGrid.append(row)
+    pathGrid = []
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            if (i, j) in path:
+                row.append('*')
+            else:
+                row.append(str(grid[i][j]) if grid[i][j] != 'X' else 'X')
+        pathGrid.append(row)
 
-        visitsDisplay = format_grid(visits)
-        firstVisitDisplay = format_grid(firstVisit)
-        lastVisitDisplay = format_grid(lastVisit)
-        
-        if mode == 'release':
-            for row in pathGrid:
-                print(" ".join(row))
-        elif mode == 'debug':
-            print("path:")
-            for row in pathGrid:
-                print(" ".join(row))
-            print("\n#visits:")
-            for row in visitsDisplay:
-                print(" ".join(row))
-            print("\nfirst visit:")
-            for row in firstVisitDisplay:
-                print(" ".join(row))
-            print("\nlast visit:")
-            for row in lastVisitDisplay:
-                print(" ".join(row))
+    visitsDisplay = format_grid(visits)
+    firstVisitDisplay = format_grid(firstVisit)
+    lastVisitDisplay = format_grid(lastVisit)
+    
+    if mode == 'release':
+        for row in pathGrid:
+            print(" ".join(row))
+    elif mode == 'debug':
+        print("path:")
+        for row in pathGrid:
+            print(" ".join(row))
+        print("\n#visits:")
+        for row in visitsDisplay:
+            print(" ".join(row))
+        print("\nfirst visit:")
+        for row in firstVisitDisplay:
+            print(" ".join(row))
+        print("\nlast visit:")
+        for row in lastVisitDisplay:
+            print(" ".join(row))
 
 
 if __name__ == "__main__":
