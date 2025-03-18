@@ -251,7 +251,7 @@ def astar(rows, cols, start, end, grid, mode, heuristic):
     estimateValueStart = 0 + heuristicDistanceStart
 
     # a tuple of estiamted cost, insertion counter, cumulative cost, row, col, 
-    heapq.push(currentNodes, (estimateValueStart, insertionCounter, 0, start[0], start[1]))
+    heapq.heappush(currentNodes, (estimateValueStart, insertionCounter, 0, start[0], start[1]))
     insertionCounter += 1
 
     counter = 0
